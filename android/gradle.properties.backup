@@ -1,0 +1,9 @@
+org.gradle.jvmargs=-Xmx64M -XX:MaxMetaspaceSize=16M
+android.useAndroidX=true
+android.enableJetifier=true
+
+# Minimal settings for low memory systems
+org.gradle.daemon=false
+org.gradle.parallel=false
+org.gradle.configureondemand=false
+org.gradle.caching=false

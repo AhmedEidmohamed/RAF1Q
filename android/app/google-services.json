@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "649353689397",
+    "project_id": "finalrafiq",
+    "storage_bucket": "finalrafiq.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649353689397:android:df99c8e4d09244d6a5347c",
+        "android_client_info": {
+          "package_name": "com.example.finalrafiq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649353689397-en1etnv7e8tfdu0g783k7a1q8suncdeu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPqwnB6QCSrY1aFjvZASzG5L9K2yuBF5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649353689397-en1etnv7e8tfdu0g783k7a1q8suncdeu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "649353689397-ejsobs4qo4iiq4mhqqf6behps1oq8jku.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.finalrafiq"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
