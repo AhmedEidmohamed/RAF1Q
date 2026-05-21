@@ -1,3 +1,4 @@
+import '../core/config/app_config.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _RecognizingPeopleScreenState extends State<RecognizingPeopleScreen> {
   int? currentlyPlayingProfileId;
   bool isPlaying = false;
 
-  final String apiKey = "sk_3aaa6d7ef1d79cae6aba84a6fcf0fa9f53ac64dd81fac576";
+  final String apiKey = AppConfig.elevenLabsApiKey;
   final String voiceId = "EXAVITQu4vr4xnSDxMaL";
 
   final List<String> relations = [

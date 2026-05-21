@@ -1,3 +1,4 @@
+import '../core/config/app_config.dart';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
@@ -36,7 +37,7 @@ class _TestObjectsRecognitionScreenState
   final AudioPlayer _player = AudioPlayer();
   late ConfettiController _confettiController;
 
-  final String apiKey = "sk_3aaa6d7ef1d79cae6aba84a6fcf0fa9f53ac64dd81fac576";
+  final String apiKey = AppConfig.elevenLabsApiKey;
   final String voiceId = "EXAVITQu4vr4xnSDxMaL";
 
   // Default objects that come with the app (using same images as recognizing objects screen)

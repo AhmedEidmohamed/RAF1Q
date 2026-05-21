@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../core/config/app_config.dart';
 
 class ChatService {
-  static String get apiKey => dotenv.env['GROQ_API_KEY'] ?? '';
+  static const String apiKey = AppConfig.groqChatApiKey;
 
   static Future<String> sendMessage(String message,
       {String? context, String? question}) async {

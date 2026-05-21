@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/app_state.dart';
 import '../services/firebase_service.dart';
-import '../widgets/custom_widgets.dart';
 
 class DoctorLoginScreen extends StatefulWidget {
   const DoctorLoginScreen({Key? key}) : super(key: key);
@@ -13,10 +12,11 @@ class DoctorLoginScreen extends StatefulWidget {
   State<DoctorLoginScreen> createState() => _DoctorLoginScreenState();
 }
 
-class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTickerProviderStateMixin {
+class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -24,7 +24,7 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -33,8 +33,15 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
+        final String phone = _phoneController.text.trim();
+        String loginEmail = phone;
+        // Automatically map phone to email if it doesn't contain '@'
+        if (!loginEmail.contains('@')) {
+          loginEmail = '$phone@rafiq.com';
+        }
+
         await _firebaseService.loginDoctor(
-          email: _emailController.text.trim(),
+          email: loginEmail,
           password: _passwordController.text,
         );
 
@@ -46,11 +53,11 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
           final doctorProfile = DoctorProfile(
             id: doctorData.id!,
             fullName: doctorData.name,
-            username: _emailController.text,
+            username: phone,
             password: _passwordController.text,
             specialization: doctorData.specialization,
             email: doctorData.email,
-            phone: doctorData.phoneNumber ?? '',
+            phone: doctorData.phoneNumber ?? phone,
             linkedChildrenIds: List<String>.from(doctorData.patients ?? []),
             photoUrl: doctorData.profileImageUrl,
             clinicName: doctorData.clinicInfo?['clinicName'],
@@ -82,36 +89,52 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: isTablet ? 500 : double.infinity,
-                ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF8FAFC), // Slate 50
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 10),
+                    // Shield Icon Header
+                    _buildHeaderIcon(),
+                    const SizedBox(height: 20),
 
-                    // AI Logo Section
-                    _buildBranding(),
+                    // Title
+                    const Text(
+                      'دخول الأخصائيين',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E3A8A), // Dark blue
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    
+                    // Subtitle
+                    const Text(
+                      'مرحباً بك في بوابة الأخصائي المعتمد',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF64748B), // Slate 500
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
 
-                    const SizedBox(height: 10),
+                    // Login Form Card
+                    _buildLoginCard(),
 
-                    // Login Form
-                    _buildModernLoginForm(),
+                    const SizedBox(height: 24),
 
-                    const SizedBox(height: 10),
-
-                    // Sign up link
-                    _buildSignUpLink(),
+                    // Back to parents login
+                    _buildBackToParentsLink(),
                   ],
                 ),
               ),
@@ -122,55 +145,35 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
     );
   }
 
-  Widget _buildBranding() {
-    return Column(
-      children: [
-        // AI Brain Icon
-        const CircleAvatar(
-          radius: 50,
-          backgroundImage: AssetImage('assets/images/ic_launcher.png'),
+  Widget _buildHeaderIcon() {
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F1FF), // Very light blue
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Center(
+        child: Icon(
+          Icons.verified_user_outlined,
+          color: Color(0xFF2563EB), // Rich blue
+          size: 32,
         ),
-        const SizedBox(height: 15),
-
-        // Title
-        const Text(
-          'مرحباً دكتور!',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1A1A2E),
-            letterSpacing: 1.2,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'سجل دخولك لمتابعة مرضاك مع رفيق',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black54,
-            fontWeight: FontWeight.w300,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildModernLoginForm() {
+  Widget _buildLoginCard() {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.grey[200]!,
-          width: 1,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 20,
+            offset: const Offset(0, 8),
             spreadRadius: 5,
           ),
         ],
@@ -178,109 +181,173 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
       child: Form(
         key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Email Field
-            _buildModernTextField(
-              controller: _emailController,
-              label: 'البريد الإلكتروني',
-              hint: 'أدخل بريدك الإلكتروني',
-              icon: Icons.email_outlined,
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
+            // Phone Field
+            _buildCustomField(
+              controller: _phoneController,
+              label: 'رقم الهاتف المسجل',
+              icon: Icons.phone_outlined,
+              hintText: '01xxxxxxxxx',
+              keyboardType: TextInputType.phone,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'الرجاء إدخال رقم الهاتف';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 20),
 
             // Password Field
-            _buildModernTextField(
+            _buildCustomField(
               controller: _passwordController,
               label: 'كلمة المرور',
-              hint: 'أدخل كلمة المرور',
               icon: Icons.lock_outline_rounded,
+              hintText: '........',
               obscureText: _obscurePassword,
-              suffixIcon: IconButton(
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_rounded
-                      : Icons.visibility_rounded,
-                  color: Colors.grey,
-                ),
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-              ),
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
+              showToggle: true,
+              onToggleVisibility: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'الرجاء إدخال كلمة المرور';
+                }
+                return null;
+              },
             ),
-            const SizedBox(height: 32),
+            
+            const SizedBox(height: 12),
+            
+            // Forgot Password
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  // TODO: Implement forgot password
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 0),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text(
+                  'نسيت كلمة المرور؟',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E3A8A), // Dark blue
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
 
             // Login Button
-            _buildModernLoginButton(),
+            _buildSubmitButton(),
+            
+            const SizedBox(height: 24),
+            
+            // Divider
+            const Divider(color: Color(0xFFF1F5F9), thickness: 1.5),
+            
+            const SizedBox(height: 16),
+            
+            // Create Account Section
+            const Center(
+              child: Text(
+                'ليس لديك حساب أخصائي؟',
+                style: TextStyle(
+                  color: Color(0xFF64748B),
+                  fontSize: 12.5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildCreateAccountButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildModernTextField({
+  Widget _buildCustomField({
     required TextEditingController controller,
     required String label,
-    required String hint,
     required IconData icon,
+    required String hintText,
     bool obscureText = false,
     TextInputType? keyboardType,
-    Widget? suffixIcon,
+    bool showToggle = false,
+    VoidCallback? onToggleVisibility,
     String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1A1A2E),
-          ),
+        // Label Row
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E293B), // Dark slate
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
+        
+        // Input Field
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontSize: 14.5, color: Colors.black87),
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey[400],
-            ),
+            hintText: hintText,
+            hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13.5), // Slate 400
+            filled: true,
+            fillColor: const Color(0xFFF1F5F9), // Slate 100
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             prefixIcon: Icon(
               icon,
-              color: const Color(0xFF007aff),
+              size: 20,
+              color: const Color(0xFF94A3B8),
             ),
-            suffixIcon: suffixIcon,
-            filled: true,
-            fillColor: Colors.white,
+            suffixIcon: showToggle
+                ? IconButton(
+                    icon: Icon(
+                      obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: const Color(0xFF94A3B8),
+                      size: 20,
+                    ),
+                    onPressed: onToggleVisibility,
+                  )
+                : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF007aff),
-                width: 1,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF007aff),
-                width: 1,
-              ),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF007aff),
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
             ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.0),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+            ),
+            errorStyle: const TextStyle(color: Color(0xFFEF4444), fontSize: 11),
           ),
           validator: validator,
         ),
@@ -288,79 +355,93 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> with SingleTicker
     );
   }
 
-  Widget _buildModernLoginButton() {
-    return Container(
-      width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF007aff),
-            Color(0xFF0088ff),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF007aff).withOpacity(0.3),
-            blurRadius: 15,
-            spreadRadius: 2,
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      height: 52,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _login,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF1E3A8A), // Dark blue
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _isLoading ? null : _login,
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: _isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 3,
-                    ),
-                  )
-                : const Text(
-                    'تسجيل دخول',
+        ),
+        child: _isLoading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
+              )
+            : const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'دخول لوحة التحكم',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(width: 8),
+                  Icon(Icons.login_rounded, size: 20),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildCreateAccountButton() {
+    return SizedBox(
+      height: 50,
+      child: OutlinedButton(
+        onPressed: () => Navigator.pushReplacementNamed(context, '/doctor-registration'),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Color(0xFF1E3A8A), width: 1.2),
+          foregroundColor: const Color(0xFF1E3A8A),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: const Text(
+          'إنشاء حساب أخصائي جديد',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSignUpLink() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          'ليس لديك حساب؟',
-          style: TextStyle(
-            color: Colors.black54,
-            fontSize: 14,
-          ),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pushReplacementNamed(context, '/doctor-registration'),
-          child: const Text(
-            'إنشاء حساب جديد',
+  Widget _buildBackToParentsLink() {
+    return TextButton(
+      onPressed: () {
+        Navigator.pushReplacementNamed(context, '/child-login');
+      },
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'العودة لتسجيل دخول أولياء الأمور',
             style: TextStyle(
-              color: Color(0xFF007aff),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+              color: Color(0xFF64748B),
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ),
-      ],
+          SizedBox(width: 4),
+          Icon(
+            Icons.arrow_back_rounded, // Points left in RTL
+            color: Color(0xFF64748B),
+            size: 16,
+          ),
+        ],
+      ),
     );
   }
 }

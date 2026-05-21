@@ -611,11 +611,14 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen>
             id: child.id,
             fullName: child.name.isNotEmpty ? child.name : 'طفل رفيق',
             age: int.tryParse(child.age) ?? 0,
-            dateOfBirth: DateTime.now()
-                .subtract(Duration(days: (int.tryParse(child.age) ?? 0) * 365)),
-            gender: 'غير محدد',
+            dateOfBirth: child.preferences?['dateOfBirth'] != null 
+                ? DateTime.parse(child.preferences!['dateOfBirth']) 
+                : DateTime.now().subtract(Duration(days: (int.tryParse(child.age) ?? 0) * 365)),
+            gender: child.preferences?['gender'] ?? 'غير محدد',
             governorate: child.preferences?['governorate'] ?? 'غير محدد',
-            healthStatus: 'مستقرة',
+            school: child.preferences?['school'],
+            iqLevel: child.preferences?['iqLevel'],
+            healthStatus: child.preferences?['healthStatus'] ?? 'مستقرة',
             username: child.name.isNotEmpty ? child.name : 'user',
             password: '',
           ),

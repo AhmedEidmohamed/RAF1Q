@@ -125,9 +125,14 @@ class _ChildLoginScreenState extends State<ChildLoginScreen>
       try {
         final appState = Provider.of<AppState>(context, listen: false);
 
+        String email = _usernameController.text.trim();
+        if (!email.contains('@')) {
+          email = '$email@rafiq.com';
+        }
+
         // Use Firebase authentication
         await _firebaseService.loginChild(
-          email: _usernameController.text,
+          email: email,
           password: _passwordController.text,
         );
 
@@ -362,18 +367,18 @@ class _ChildLoginScreenState extends State<ChildLoginScreen>
         key: _formKey,
         child: Column(
           children: [
-            // Username Field
+            // Phone Number Field
             _buildModernTextField(
               controller: _usernameController,
-              label: 'اسم المستخدم',
-              hint: 'أدخل اسم المستخدم',
-              icon: Icons.person_outline_rounded,
+              label: 'رقم الهاتف',
+              hint: 'أدخل رقم الهاتف',
+              icon: Icons.phone_outlined,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'مطلوب';
+                  return 'الرجاء إدخال رقم الهاتف';
                 }
                 if (value.length < 3) {
-                  return 'الحد الأدنى 3 أحرف';
+                  return 'الرجاء إدخال رقم هاتف صحيح';
                 }
                 return null;
               },

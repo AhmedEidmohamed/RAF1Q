@@ -1,3 +1,4 @@
+import '../core/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -20,7 +21,7 @@ class _SmartObjectsGalleryState extends State<SmartObjectsGallery> {
   bool showInputSection = false;
   final AudioPlayer _player = AudioPlayer();
 
-  final String apiKey = "sk_3aaa6d7ef1d79cae6aba84a6fcf0fa9f53ac64dd81fac576";
+  final String apiKey = AppConfig.elevenLabsApiKey;
   final String voiceId = "EXAVITQu4vr4xnSDxMaL";
 
   final List<String> categories = [

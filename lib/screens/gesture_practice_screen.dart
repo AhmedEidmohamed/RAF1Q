@@ -1,3 +1,4 @@
+import '../core/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -31,7 +32,7 @@ class _GesturePracticeScreenState extends State<GesturePracticeScreen> {
   bool _hasError = false;
   final AudioPlayer _player = AudioPlayer();
 
-  final String apiKey = "sk_3aaa6d7ef1d79cae6aba84a6fcf0fa9f53ac64dd81fac576";
+  final String apiKey = AppConfig.elevenLabsApiKey;
   final String voiceId = "EXAVITQu4vr4xnSDxMaL";
 
   @override

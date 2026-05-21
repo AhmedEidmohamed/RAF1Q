@@ -3,10 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../core/config/app_config.dart';
 
 class VoiceChatService {
-  static String get apiKey => dotenv.env['GROQ_API_KEY'] ?? '';
+  static const String apiKey = AppConfig.groqChatApiKey;
 
   static final SpeechToText _speechToText = SpeechToText();
   static final FlutterTts _flutterTts = FlutterTts();

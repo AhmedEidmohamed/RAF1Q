@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/app_state.dart';
 import '../services/firebase_service.dart';
-import '../widgets/custom_widgets.dart';
 
 class DoctorRegistrationScreen extends StatefulWidget {
   const DoctorRegistrationScreen({Key? key}) : super(key: key);
@@ -14,26 +13,26 @@ class DoctorRegistrationScreen extends StatefulWidget {
   State<DoctorRegistrationScreen> createState() => _DoctorRegistrationScreenState();
 }
 
-class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> with SingleTickerProviderStateMixin {
+class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _centerController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _specializationController = TextEditingController();
-  final _phoneController = TextEditingController();
   
   bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
   final FirebaseService _firebaseService = FirebaseService();
 
   @override
   void dispose() {
     _fullNameController.dispose();
-    _emailController.dispose();
+    _phoneController.dispose();
+    _centerController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _specializationController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
@@ -41,7 +40,10 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
     if (_formKey.currentState!.validate()) {
       if (_passwordController.text != _confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('كلمات المرور غير متطابقة'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text('كلمات المرور غير متطابقة'), 
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
@@ -49,12 +51,15 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
       setState(() => _isLoading = true);
 
       try {
+        final String phone = _phoneController.text.trim();
+        final String email = '$phone@rafiq.com'; // Automatically map phone to email for Firebase Auth
+
         UserCredential userCredential = await _firebaseService.registerDoctor(
-          email: _emailController.text.trim(),
+          email: email,
           password: _passwordController.text,
           name: _fullNameController.text.trim(),
-          specialization: _specializationController.text.trim(),
-          phoneNumber: _phoneController.text.trim(),
+          specialization: 'أخصائي', // Default or could use _centerController
+          phoneNumber: phone,
         );
 
         final doctorData = await _firebaseService.getDoctorData(userCredential.user!.uid);
@@ -63,14 +68,14 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
           final doctorProfile = DoctorProfile(
             id: doctorData.id!,
             fullName: doctorData.name,
-            username: _emailController.text,
+            username: phone, // Username is the phone
             password: _passwordController.text,
             specialization: doctorData.specialization,
             email: doctorData.email,
-            phone: doctorData.phoneNumber ?? '',
+            phone: doctorData.phoneNumber ?? phone,
             linkedChildrenIds: List<String>.from(doctorData.patients ?? []),
             photoUrl: doctorData.profileImageUrl,
-            clinicName: doctorData.clinicInfo?['clinicName'],
+            clinicName: _centerController.text.trim(), // Save the center/hospital
             clinicAddress: doctorData.clinicInfo?['address'],
             qualifications: doctorData.clinicInfo?['qualifications'],
             experience: doctorData.clinicInfo?['experience'],
@@ -81,6 +86,20 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
           );
 
           Provider.of<AppState>(context, listen: false).setCurrentDoctor(doctorProfile);
+          
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle_rounded, color: Colors.white),
+                  SizedBox(width: 8),
+                  Text('تم إنشاء الحساب بنجاح!'),
+                ],
+              ),
+              backgroundColor: Color(0xFF2563EB),
+            ),
+          );
+
           Navigator.of(context).pushReplacementNamed('/doctor-dashboard');
         }
       } catch (e) {
@@ -97,35 +116,51 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600;
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: isTablet ? 600 : double.infinity,
-                ),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF8FAFC), // Slate 50
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 10),
+                    // Shield Icon Header
+                    _buildHeaderIcon(),
+                    const SizedBox(height: 20),
 
-                    // AI Logo Section
-                    _buildBranding(),
+                    // Title
+                    const Text(
+                      'إنشاء حساب أخصائي',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E3A8A), // Dark blue
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    
+                    // Subtitle
+                    const Text(
+                      'انضم إلى رفيق لمتابعة تقدم الأطفال وتقديم الدعم المتخصص',
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: Color(0xFF64748B), // Slate 500
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
 
-                    const SizedBox(height: 10),
+                    // Registration Form Card
+                    _buildRegistrationCard(),
 
-                    // Registration Form
-                    _buildModernRegistrationForm(),
+                    const SizedBox(height: 24),
 
-                    const SizedBox(height: 10),
-
-                    // Login link
+                    // Login Link Footer
                     _buildLoginLink(),
                   ],
                 ),
@@ -137,55 +172,35 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
     );
   }
 
-  Widget _buildBranding() {
-    return Column(
-      children: [
-        // AI Brain Icon
-        const CircleAvatar(
-          radius: 50,
-          backgroundImage: AssetImage('assets/images/ic_launcher.png'),
+  Widget _buildHeaderIcon() {
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8F1FF), // Very light blue
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Center(
+        child: Icon(
+          Icons.verified_user_outlined,
+          color: Color(0xFF2563EB), // Rich blue
+          size: 32,
         ),
-        const SizedBox(height: 15),
-
-        // Title
-        const Text(
-          'إنشاء حساب طبيب',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1A1A2E),
-            letterSpacing: 1.2,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'انضم إلى شبكة الأطباء المحترفين مع رفيق',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.black54,
-            fontWeight: FontWeight.w300,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildModernRegistrationForm() {
+  Widget _buildRegistrationCard() {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.grey[200]!,
-          width: 1,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 20,
+            offset: const Offset(0, 8),
             spreadRadius: 5,
           ),
         ],
@@ -194,130 +209,184 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
         key: _formKey,
         child: Column(
           children: [
-            _buildModernTextField(
+            // Name Field
+            _buildCustomField(
               controller: _fullNameController,
               label: 'الاسم الكامل',
-              hint: 'أدخل اسمك بالكامل',
-              icon: Icons.person_outline,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
+              icon: Icons.person_outline_rounded,
+              hintText: 'الأخصائي/ة...',
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'الرجاء إدخال الاسم الكامل';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 20),
-            _buildModernTextField(
-              controller: _emailController,
-              label: 'البريد الإلكتروني',
-              hint: 'أدخل بريدك الإلكتروني',
-              icon: Icons.email_outlined,
-              keyboardType: TextInputType.emailAddress,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
-            ),
-            const SizedBox(height: 20),
-            _buildModernTextField(
-              controller: _specializationController,
-              label: 'التخصص',
-              hint: 'تخصصك الطبي',
-              icon: Icons.medication_outlined,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
-            ),
-            const SizedBox(height: 20),
-            _buildModernTextField(
+
+            // Phone Field
+            _buildCustomField(
               controller: _phoneController,
               label: 'رقم الهاتف',
-              hint: 'رقم هاتفك',
               icon: Icons.phone_outlined,
+              hintText: '0123456789',
               keyboardType: TextInputType.phone,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'الرجاء إدخال رقم الهاتف';
+                }
+                if (value.trim().length < 10) {
+                  return 'الرجاء إدخال رقم هاتف صحيح';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 20),
-            _buildModernTextField(
+
+            // Center / Hospital Field
+            _buildCustomField(
+              controller: _centerController,
+              label: 'المركز / المستشفى',
+              icon: Icons.domain_outlined,
+              hintText: 'اسم الجهة التي تعمل بها...',
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'الرجاء إدخال اسم المركز أو المستشفى';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+
+            // Password Field
+            _buildCustomField(
               controller: _passwordController,
               label: 'كلمة المرور',
-              hint: 'كلمة المرور',
               icon: Icons.lock_outline_rounded,
-              obscureText: true,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
+              hintText: 'كلمة المرور (6 أحرف على الأقل)',
+              obscureText: _obscurePassword,
+              showToggle: true,
+              onToggleVisibility: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'الرجاء إدخال كلمة المرور';
+                }
+                if (value.length < 6) {
+                  return 'يجب أن تكون 6 أحرف على الأقل';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 20),
-            _buildModernTextField(
+
+            // Confirm Password Field
+            _buildCustomField(
               controller: _confirmPasswordController,
-              label: 'تأكيد المرور',
-              hint: 'أعد الكتابة',
-              icon: Icons.lock_clock_outlined,
-              obscureText: true,
-              validator: (value) => (value == null || value.isEmpty) ? 'مطلوب' : null,
+              label: 'تأكيد كلمة المرور',
+              icon: Icons.lock_outline_rounded,
+              hintText: 'أعد كتابة كلمة المرور',
+              obscureText: _obscureConfirmPassword,
+              showToggle: true,
+              onToggleVisibility: () {
+                setState(() {
+                  _obscureConfirmPassword = !_obscureConfirmPassword;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'الرجاء تأكيد كلمة المرور';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 32),
 
-            // Register Button
-            _buildModernRegisterButton(),
+            // Create Account Button
+            _buildSubmitButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildModernTextField({
+  Widget _buildCustomField({
     required TextEditingController controller,
     required String label,
-    required String hint,
     required IconData icon,
+    required String hintText,
     bool obscureText = false,
     TextInputType? keyboardType,
-    Widget? suffixIcon,
+    bool showToggle = false,
+    VoidCallback? onToggleVisibility,
     String? Function(String?)? validator,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1A1A2E),
-          ),
+        // Label Row
+        Row(
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: const Color(0xFF1E3A8A), // Dark blue
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E3A8A), // Dark blue
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
+        
+        // Input Field
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 16,
-          ),
+          style: const TextStyle(fontSize: 14.5, color: Colors.black87),
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(
-              color: Colors.grey[400],
-            ),
-            prefixIcon: Icon(
-              icon,
-              color: const Color(0xFF007aff),
-            ),
-            suffixIcon: suffixIcon,
+            hintText: hintText,
+            hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13.5), // Slate 400
             filled: true,
-            fillColor: Colors.white,
+            fillColor: const Color(0xFFF1F5F9), // Slate 100
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            suffixIcon: showToggle
+                ? IconButton(
+                    icon: Icon(
+                      obscureText ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      color: const Color(0xFF94A3B8),
+                      size: 20,
+                    ),
+                    onPressed: onToggleVisibility,
+                  )
+                : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF007aff),
-                width: 1,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF007aff),
-                width: 1,
-              ),
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(
-                color: Color(0xFF007aff),
-                width: 2,
-              ),
+              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
             ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.0),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+            ),
+            errorStyle: const TextStyle(color: Color(0xFFEF4444), fontSize: 11),
           ),
           validator: validator,
         ),
@@ -325,52 +394,36 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
     );
   }
 
-  Widget _buildModernRegisterButton() {
-    return Container(
+  Widget _buildSubmitButton() {
+    return SizedBox(
+      height: 52,
       width: double.infinity,
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF007aff),
-            Color(0xFF0088ff),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF007aff).withOpacity(0.3),
-            blurRadius: 15,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: _isLoading ? null : _saveProfile,
-          borderRadius: BorderRadius.circular(16),
-          child: Center(
-            child: _isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 3,
-                    ),
-                  )
-                : const Text(
-                    'إنشاء حساب جديد',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _saveProfile,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF2563EB), // Solid blue
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
+        child: _isLoading
+            ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
+              )
+            : const Text(
+                'إنشاء حساب جديد',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
       ),
     );
   }
@@ -382,18 +435,18 @@ class _DoctorRegistrationScreenState extends State<DoctorRegistrationScreen> wit
         const Text(
           'لديك حساب بالفعل؟',
           style: TextStyle(
-            color: Colors.black54,
-            fontSize: 14,
+            color: Color(0xFF64748B),
+            fontSize: 13.5,
           ),
         ),
         TextButton(
           onPressed: () => Navigator.pushReplacementNamed(context, '/doctor-login'),
           child: const Text(
-            'سجل دخولك',
+            'تسجيل الدخول',
             style: TextStyle(
-              color: Color(0xFF007aff),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+              color: Color(0xFF2563EB),
+              fontSize: 13.5,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

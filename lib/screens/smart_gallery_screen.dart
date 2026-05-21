@@ -1,3 +1,4 @@
+import '../core/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:http/http.dart' as http;
@@ -19,7 +20,7 @@ class _SmartGalleryScreenState extends State<SmartGalleryScreen>
   bool _isPlaying = false;
   int _currentIndex = 0;
 
-  final String apiKey = "sk_3aaa6d7ef1d79cae6aba84a6fcf0fa9f53ac64dd81fac576";
+  final String apiKey = AppConfig.elevenLabsApiKey;
   final String voiceId = "EXAVITQu4vr4xnSDxMaL";
 
   // Default gallery items with categories

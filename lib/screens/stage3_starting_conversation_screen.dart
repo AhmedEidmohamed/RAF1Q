@@ -16,7 +16,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../core/config/app_config.dart';
 
 /// Stage 3A: Starting Conversation Screen
 /// Voice interaction UI with continuous AI dialogue
@@ -45,14 +45,10 @@ class _StartingConversationScreenState
   bool _shouldContinueLoop = true;
   final List<Map<String, String>> _conversationHistory = [];
 
-  // Groq API Key (Using the one found in the project)
-  String get _groqApiKey => dotenv.env['GROQ_API_KEY'] ?? '';
-
-  // ElevenLabs API Key (Place your key here)
-  String get _elevenLabsApiKey => dotenv.env['ELEVENLABS_API_KEY'] ?? '';
-
-  // Gemini API Key (Placeholder - hopefully available in AppState or provided)
-  String get _geminiApiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
+  // API Keys from AppConfig
+  final String _groqApiKey = AppConfig.groqApiKey;
+  final String _elevenLabsApiKey = AppConfig.elevenLabsApiKey;
+  final String _geminiApiKey = AppConfig.geminiApiKey;
 
   @override
   void initState() {
@@ -63,8 +59,7 @@ class _StartingConversationScreenState
 
     _groqService = GroqService(apiKey: _groqApiKey);
     _elevenLabsService = ElevenLabsService(apiKey: _elevenLabsApiKey);
-    _geminiService = GeminiService(
-        apiKey: "AIzaSy..."); // I will use a dummy or try to find it
+    _geminiService = GeminiService(apiKey: _geminiApiKey);
 
     _initTts();
     _requestMicrophonePermission();
@@ -127,7 +122,7 @@ class _StartingConversationScreenState
   void _startConversation() {
     String greeting = "أزيك يا بطل! أنا رفيق صاحبك الجديد.. عامل إيه النهاردة؟";
     _handleAiResponse(greeting);
-    
+
     // Log view_item activity (starting a conversation session)
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -385,7 +380,8 @@ class _StartingConversationScreenState
                                   ]
                                 : [],
                             image: const DecorationImage(
-                              image: AssetImage('assets/images/robot_avatar.png'),
+                              image:
+                                  AssetImage('assets/images/robot_avatar.png'),
                               fit: BoxFit.cover,
                             ),
                           ),
