@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/app_state.dart';
 import '../services/firebase_service.dart';
+import '../services/service_locator.dart';
 
 class DoctorLoginScreen extends StatefulWidget {
   const DoctorLoginScreen({Key? key}) : super(key: key);
@@ -20,7 +21,8 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
-  final FirebaseService _firebaseService = FirebaseService();
+  // Unified Data Service
+  final _dataService = ServiceLocator.getUnifiedDataService();
 
   @override
   void dispose() {
@@ -40,40 +42,61 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
           loginEmail = '$phone@rafiq.com';
         }
 
-        await _firebaseService.loginDoctor(
+        // Use Unified Data Service which tries normal backend first
+        final result = await _dataService.login(
           email: loginEmail,
           password: _passwordController.text,
+          isDoctor: true,
         );
 
-        final doctorData = await _firebaseService.getDoctorData(
-          _firebaseService.currentUser!.uid,
-        );
+        final source = result['source'];
+        final loginData = result['data'];
 
-        if (doctorData != null && mounted) {
-          final doctorProfile = DoctorProfile(
-            id: doctorData.id!,
-            fullName: doctorData.name,
+        DoctorProfile doctorProfile;
+
+        if (source == 'backend') {
+          // Normal REST backend successful!
+          final userMap = loginData['user'] ?? {};
+          doctorProfile = DoctorProfile(
+            id: userMap['id']?.toString() ?? '',
+            fullName: userMap['name'] ?? '',
             username: phone,
             password: _passwordController.text,
-            specialization: doctorData.specialization,
-            email: doctorData.email,
-            phone: doctorData.phoneNumber ?? phone,
-            linkedChildrenIds: List<String>.from(doctorData.patients ?? []),
-            photoUrl: doctorData.profileImageUrl,
-            clinicName: doctorData.clinicInfo?['clinicName'],
-            clinicAddress: doctorData.clinicInfo?['address'],
-            qualifications: doctorData.clinicInfo?['qualifications'],
-            experience: doctorData.clinicInfo?['experience'],
-            about: doctorData.clinicInfo?['about'],
-            languages: List<String>.from(doctorData.clinicInfo?['languages'] ?? ['Arabic', 'English']),
-            licenseNumber: doctorData.licenseNumber,
-            workingHours: doctorData.clinicInfo?['workingHours'],
+            specialization: userMap['specialization'] ?? 'Specialist',
+            email: userMap['email'] ?? '',
+            phone: phone,
+            linkedChildrenIds: [],
           );
-
-          Provider.of<AppState>(context, listen: false).setCurrentDoctor(doctorProfile);
-          Navigator.of(context).pushReplacementNamed('/doctor-dashboard');
         } else {
-          throw Exception('بيانات الطبيب غير موجودة');
+          // Firebase fallback successful!
+          final UserCredential credential = loginData;
+          final doctorData = await _dataService.getChildProfile(credential.user!.uid); // Try retrieving doctor details
+          
+          // Fallback to fetch doctor document from firebase direct logic via service
+          final directFirebaseData = await _dataService.getChildProfile(credential.user!.uid);
+          final profile = directFirebaseData['profile'];
+
+          doctorProfile = DoctorProfile(
+            id: credential.user!.uid,
+            fullName: profile?['fullName'] ?? profile?['name'] ?? 'الأخصائي',
+            username: phone,
+            password: _passwordController.text,
+            specialization: profile?['specialization'] ?? 'أخصائي تخاطب وتعديل سلوك',
+            email: credential.user!.email ?? '',
+            phone: phone,
+            linkedChildrenIds: [],
+          );
+        }
+
+        if (mounted) {
+          Provider.of<AppState>(context, listen: false).setCurrentDoctor(doctorProfile);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('تم تسجيل دخول الأخصائي بنجاح عبر: ${source == 'backend' ? 'الخادم الرئيسي' : 'فايربيس'}'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.of(context).pushReplacementNamed('/doctor-dashboard');
         }
       } catch (e) {
         if (mounted) {

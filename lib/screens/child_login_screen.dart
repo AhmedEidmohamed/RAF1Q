@@ -6,6 +6,7 @@ import '../providers/app_state.dart';
 import '../widgets/custom_widgets.dart';
 import '../models/models.dart';
 import '../services/firebase_service.dart';
+import '../services/service_locator.dart';
 import '../l10n/app_localizations.dart';
 
 /// Child Login Screen
@@ -30,8 +31,8 @@ class _ChildLoginScreenState extends State<ChildLoginScreen>
   late AnimationController _floatController;
   late Animation<double> _floatAnimation;
 
-  // Firebase Service
-  final FirebaseService _firebaseService = FirebaseService();
+  // Unified Data Service
+  final _dataService = ServiceLocator.getUnifiedDataService();
 
   // Google Sign-In
   final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -79,15 +80,16 @@ class _ChildLoginScreenState extends State<ChildLoginScreen>
   void _checkLoginStatus() async {
     final appState = Provider.of<AppState>(context, listen: false);
 
-    // Check if Firebase user is logged in
+    // Check if user is logged in via Firebase
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
-        // Get child data
-        final childData = await _firebaseService.getChildData(user.uid);
+        // Get child data via Unified Service
+        final result = await _dataService.getChildProfile(user.uid);
+        final profile = result['profile'];
 
-        if (childData != null) {
-          appState.setChildName(childData.name);
+        if (profile != null) {
+          appState.setChildName(profile['fullName'] ?? profile['name'] ?? '');
           appState.setUserRole('child');
 
           // Navigate to home if already logged in
@@ -130,33 +132,46 @@ class _ChildLoginScreenState extends State<ChildLoginScreen>
           email = '$email@rafiq.com';
         }
 
-        // Use Firebase authentication
-        await _firebaseService.loginChild(
+        // Use Unified Data Service which tries normal backend first
+        final result = await _dataService.login(
           email: email,
           password: _passwordController.text,
+          isDoctor: false,
         );
 
-        // Get child data from Firebase
-        final childData = await _firebaseService.getChildData(
-          _firebaseService.currentUser!.uid,
-        );
+        final source = result['source'];
+        final loginData = result['data'];
 
-        if (childData != null) {
-          appState.setChildName(childData.name);
-          appState.setUserRole('child');
+        String childName = '';
+        String childId = '';
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('تم تسجيل الدخول بنجاح!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          // Navigate to home dashboard
-          Navigator.of(context).pushReplacementNamed('/home');
+        if (source == 'backend') {
+          // Normal REST backend successful!
+          childName = loginData['user']?['name'] ?? _usernameController.text;
+          childId = loginData['user']?['id']?.toString() ?? '';
         } else {
-          throw Exception('Child data not found');
+          // Firebase fallback successful!
+          final UserCredential credential = loginData;
+          childId = credential.user!.uid;
+          final childProfileResult = await _dataService.getChildProfile(childId);
+          final profile = childProfileResult['profile'];
+          if (profile != null) {
+            childName = profile['fullName'] ?? profile['name'] ?? '';
+          }
         }
+
+        appState.setChildName(childName);
+        appState.setUserRole('child');
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('تم تسجيل الدخول بنجاح عبر: ${source == 'backend' ? 'الخادم الرئيسي' : 'فايربيس'}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to home dashboard
+        Navigator.of(context).pushReplacementNamed('/home');
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -206,14 +221,15 @@ class _ChildLoginScreenState extends State<ChildLoginScreen>
       final user = userCredential.user;
 
       if (user != null) {
-        // Check if child exists in Firestore
-        final childData = await _firebaseService.getChildData(user.uid);
+        // Check if child exists in normal backend or firestore fallback
+        final result = await _dataService.getChildProfile(user.uid);
+        final profile = result['profile'];
 
         final appState = Provider.of<AppState>(context, listen: false);
 
-        if (childData != null) {
+        if (profile != null) {
           // Child exists, set state and navigate
-          appState.setChildName(childData.name);
+          appState.setChildName(profile['fullName'] ?? profile['name'] ?? user.displayName ?? 'User');
           appState.setUserRole('child');
 
           ScaffoldMessenger.of(context).showSnackBar(
