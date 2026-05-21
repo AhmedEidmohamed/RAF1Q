@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 import '../providers/progress_provider.dart';
 import 'api_service.dart';
+import 'unified_data_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -20,6 +21,10 @@ class ServiceLocator {
     await apiService.init();
     getIt.registerSingleton<ApiService>(apiService);
 
+    // Register UnifiedDataService
+    final unifiedDataService = UnifiedDataService();
+    getIt.registerSingleton<UnifiedDataService>(unifiedDataService);
+
     // Register Progress Provider
     getIt.registerSingleton<ProgressProvider>(ProgressProvider());
   }
@@ -29,6 +34,9 @@ class ServiceLocator {
 
   /// Get ApiService instance
   static ApiService getApiService() => getIt<ApiService>();
+
+  /// Get UnifiedDataService instance
+  static UnifiedDataService getUnifiedDataService() => getIt<UnifiedDataService>();
 
   /// Get Progress Provider instance
   static ProgressProvider getProgressProvider() => getIt<ProgressProvider>();
