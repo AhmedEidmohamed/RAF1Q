@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 import '../providers/progress_provider.dart';
+import 'api_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -14,12 +15,20 @@ class ServiceLocator {
     await appState.initialize();
     getIt.registerSingleton<AppState>(appState);
 
+    // Register ApiService
+    final apiService = ApiService();
+    await apiService.init();
+    getIt.registerSingleton<ApiService>(apiService);
+
     // Register Progress Provider
     getIt.registerSingleton<ProgressProvider>(ProgressProvider());
   }
 
   /// Get App State instance
   static AppState getAppState() => getIt<AppState>();
+
+  /// Get ApiService instance
+  static ApiService getApiService() => getIt<ApiService>();
 
   /// Get Progress Provider instance
   static ProgressProvider getProgressProvider() => getIt<ProgressProvider>();
