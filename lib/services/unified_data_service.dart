@@ -15,7 +15,14 @@ import '../models/doctor_model.dart';
 /// تقوم تلقائياً بتحويل الطلب إلى الفايربيس (Firebase) كخيار بديل لحماية تجربة المستخدم.
 class UnifiedDataService {
   final ApiService _apiService = ServiceLocator.getApiService();
-  final FirebaseService _firebaseService = FirebaseService();
+  
+  // Lazy initialization: FirebaseService is created only when first accessed,
+  // ensuring Firebase.initializeApp() has already completed.
+  FirebaseService? _firebaseServiceInstance;
+  FirebaseService get _firebaseService {
+    _firebaseServiceInstance ??= FirebaseService();
+    return _firebaseServiceInstance!;
+  }
 
   /// دالة مساعدة للتحقق مما إذا كان الخطأ ناتجاً عن عدم الاتصال بالخادم
   /// (Server Down, No internet, Host unreachable)

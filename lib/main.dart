@@ -83,10 +83,7 @@ import 'l10n/localization_delegate.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load state and locator in background
-  final setupFuture = ServiceLocator.setup();
-
-  // Initialize Firebase
+  // Initialize Firebase FIRST
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -98,7 +95,8 @@ void main() async {
     );
   }
 
-  await setupFuture;
+  // Then setup service locator (after Firebase is ready)
+  await ServiceLocator.setup();
 
   runApp(const SocialStepsApp());
 }
