@@ -1,6 +1,7 @@
 # 🚀 Rafiq (رفيق) - Therapeutic Educational Companion App
 > **A specialized educational and therapeutic companion app built with Flutter for children with social and communication difficulties.**
 > **تطبيق تعليمي وعلاجي مساعد للأطفال ذوي الصعوبات الاجتماعية والتواصلية مبني باستخدام Flutter.**
+<img width="720" height="1600" alt="WhatsApp Image 2026-06-25 at 3 34 24 AM" src="https://github.com/user-attachments/assets/4235cd00-5dcf-4eb4-b52c-749c5a04917c" />
 
 <img width="720" height="1600" alt="WhatsApp Image 2026-05-21 at 3 10 09 PM" src="https://github.com/user-attachments/assets/c30977f5-2140-4a00-a8b9-f64e140b5e24" />
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/4f339a0a-8a87-40b4-800c-b593650bcf5c" />
