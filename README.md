@@ -3,6 +3,9 @@
 > **تطبيق تعليمي وعلاجي مساعد للأطفال ذوي الصعوبات الاجتماعية والتواصلية مبني باستخدام Flutter.**
 
 <img width="720" height="1600" alt="WhatsApp Image 2026-05-21 at 3 10 09 PM" src="https://github.com/user-attachments/assets/c30977f5-2140-4a00-a8b9-f64e140b5e24" />
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/4f339a0a-8a87-40b4-800c-b593650bcf5c" />
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/83d4c10c-eb8a-4fde-8342-7495cf2e3817" />
+
 
 ---
 
