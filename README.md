@@ -78,6 +78,19 @@ This screen focuses on enhancing the child's cognitive and visual recognition ab
 - **Bottom Navigation Status:** Highlights the third active tab **"Recognition"** (التعرف) with its fingerprint icon indicator.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/d015e685-94b4-4ce2-a0ca-b2b4a4ddd231" />
 
+## 💬 Communication Stage Screen (RAFIQ)
+
+The Communication Screen focuses on enhancing the child's verbal skills, expressive language, and social initiation abilities through structured, interactive exercises.
+
+### Key Features & UI Components:
+- **Core Communication Banner:** A prominent blue header card containing a chat bubble icon, marking the active status: *"Communication Stage"* (مرحلة التواصل).
+- **Focused Training Modules (`Card` / `Column` Layout):**
+  - **Initiating Conversation Card (بدء المحادثة):** Target objective aimed at practice for starting speeches and verbal interactions, paired with a clean blue *"Start"* (ابدأ) action button.
+  - **Social Initiative Card (المبادرة بالتفاعل):** Focuses on teaching social boundary-breaking and engaging with surrounding peers, backed by a dedicated *"Start"* (ابدأ) prompt.
+- **Bottom Navigation Directory:** Explicitly highlights the **"Communication"** (التواصل) tab via its corresponding messaging layout icon, indicating full client-side view routing.
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/959c3230-ca0e-4359-940d-e78eac23a823" />
+
+
 ## 📑 Navigation Drawer (RAFIQ)
 
 The Navigation Drawer handles account management, advanced analytics, and informational resources that support parents and children using the **RAFIQ** platform.
