@@ -108,6 +108,51 @@ This screen serves as an interactive assessment tool powered by an AI chatbot. I
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/83d4c10c-eb8a-4fde-8342-7495cf2e3817" />
 
 
+## 🔐 Specialist Login Screen (RAFIQ)
+
+The Specialist Login Screen provides a secure, isolated gateway designed exclusively for doctors and behavioral therapists to access their administration panels.
+
+### Key Features & UI Components:
+- **Security Branding:** A prominent blue shield icon at the top to signify professional data protection and clinical security.
+- **Dedicated Authentication Form:**
+  - **Registered Phone Field:** Clean layout with an explicit placeholder pattern (`01xxxxxxxxx`).
+  - **Password Field:** Features standard visibility toggles and a dedicated "Forgot Password?" hyperlink.
+  - **Primary Call to Action:** A deep navy button titled *"دخول لوحة التحكم"* (Enter Dashboard) with an embedded forward icon.
+- **Specialist Registration:** An explicit outlined button for creating new medical or educational consultant accounts (*"إنشاء حساب أخصائي جديد"*).
+- **Gateway Switcher:** A bottom navigation link reading *"العودة لتسجيل دخول أولياء الأمور"* (Back to Parent Login) ensuring seamless redirection for standard app users.
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/5e3c1539-9e2d-41c7-9262-c0d7735826d4" />
+
+
+## 🩺 Doctor / Specialist Dashboard (RAFIQ)
+
+The Doctor Dashboard is a dedicated interface designed for healthcare professionals and specialists to manage their assigned pediatric cases, review analytics, and communicate with parents.
+
+### Key Features & UI Components:
+- **Personalized Professional Header:** Displays a custom greeting (*"Welcome, Dr. Ahmed Eid Mohamed Mohamed"*) along with a notification bell action button.
+- **Quick Analytics Cards:** - **Total Cases Card:** Displays the active patient count (currently `4`).
+  - **Messages Card:** Displays pending or unread parent communications (currently `12`).
+- **Current Patients List (`ListView`):** - Displays individual pediatric patient cards showing the child's name and age.
+  - Includes action toggles and navigation arrows `<` to deep-dive into the child's detailed behavioral reports and clinical history.
+- **Doctor-Specific Bottom Navigation:** Tailored navigation elements highlighting dashboard status alongside quick links for Patient Management, Parent Chats, and App Settings.
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/8acba15a-1ddd-4289-9d47-768da77bfb03" />
+
+## 👥 Patients Management Screen (Doctor Panel)
+
+The Patients Management Screen provides a dedicated, full-length scrollable list view (`ListView.builder`) allowing specialists to monitor and access all registered children under their clinical supervision.
+
+### Key Features & UI Components:
+- **Consistent Professional Header:** Retains the core greeting header (*"Welcome, Dr. Ahmed Eid Mohamed Mohamed"*) alongside notification utilities for fluid navigation.
+- **Extended Patient Registry:** Displays a comprehensive list of pediatric patient tiles. Each item features:
+  - An intuitive, child-friendly avatar placeholder.
+  - The patient's descriptive parameters (Full Name and Age tags).
+  - Quick inline configuration toggles (green adjustment sliders icon).
+  - Deep-link navigation buttons (`<`) leading to extensive neurodevelopmental charts and behavioral analysis profiles.
+- **Bottom Navigation State:** Highlights the second tab **"Patients/Users"** with a distinct violet/blue activated theme color, signaling the active section directory.
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/f84dcabc-f247-4006-a767-0015d0bad771" />
+
+
+
+
 ---
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
