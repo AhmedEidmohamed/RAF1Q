@@ -1,6 +1,18 @@
 # 🚀 Rafiq (رفيق) - Therapeutic Educational Companion App
 > **A specialized educational and therapeutic companion app built with Flutter for children with social and communication difficulties.**
 > **تطبيق تعليمي وعلاجي مساعد للأطفال ذوي الصعوبات الاجتماعية والتواصلية مبني باستخدام Flutter.**
+## 📱 Splash Screen (RAFIQ)
+
+The Splash Screen is the user's first interaction with the **RAFIQ** application. It features a clean, minimalist white background centered around the vibrant and playful brand identity.
+
+### Key Visual Elements:
+- **Playful Typography:** Bright, multi-colored lettering for the word "RAFIQ".
+- **Friendly Mascot:** An animated kid character waving from behind the letter 'R' to create an inviting atmosphere.
+- **Engaging Icons:** Features a paper airplane, star elements, and a heart-shaped puzzle piece symbolizing connection, growth, and joy.
+
+### Technical Implementation Idea:
+- Built using a clean `Scaffold` with a centered brand asset.
+- Utilizes a brief delay (e.g., 3 seconds) using `Future.delayed` before smoothly navigating to the next screen (Onboarding or Authentication).
 <img width="720" height="1600" alt="WhatsApp Image 2026-06-25 at 3 34 24 AM" src="https://github.com/user-attachments/assets/4235cd00-5dcf-4eb4-b52c-749c5a04917c" />
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/92d4bfd9-1074-4da9-a835-fcc72b39c11b" />
 
