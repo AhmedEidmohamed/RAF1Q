@@ -31,6 +31,7 @@ The Login Screen provides a secure and user-friendly interface for authenticatio
 - **Alternative Authentication:** - A quick-access "Sign in with Google" button fixed at the bottom.
   - A navigation link reading "Don't have an account? Create a smart account" to redirect users to the registration screen.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/92d4bfd9-1074-4da9-a835-fcc72b39c11b" />
+
 ## 🏠 Home Screen / Dashboard (RAFIQ)
 
 The Home Screen acts as the main interactive dashboard for the child, displaying personalized greetings, current learning stages, and accessible activities.
