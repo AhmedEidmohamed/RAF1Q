@@ -49,6 +49,18 @@ The Home Screen acts as the main interactive dashboard for the child, displaying
 
 
 <img width="720" height="1600" alt="WhatsApp Image 2026-05-21 at 3 10 09 PM" src="https://github.com/user-attachments/assets/c30977f5-2140-4a00-a8b9-f64e140b5e24" />
+
+## 🎯 Interaction & Daily Training Screen (RAFIQ)
+
+This screen focuses on the core daily educational tasks and interactive modules designed to develop the child's social and emotional skills.
+
+### Key Features & UI Components:
+- **Daily Training Banner:** A prominent blue card with a lightbulb icon highlighting the day's core focus: *"Understanding Emotions and Feelings"*.
+- **Interactive Lesson Card (Scrollable List):** - Dynamic visual header tailored to the topic.
+  - **Topic Title:** *"Social Cues"*.
+  - **Short Description:** Explains the lesson's goal (*"The child learns to understand cues such as gestures and body language in a fun way"*).
+  - **Call to Action (CTA):** A solid blue *"Start Now"* (ابدأ الآن) button to initiate the lesson.
+- **Bottom Navigation Status:** Shows the navigation bar with the second tab **"Interaction"** (التفاعل) currently selected and highlighted.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/59d31247-5b27-4b57-920c-900dcb73fe7b" />
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/d015e685-94b4-4ce2-a0ca-b2b4a4ddd231" />
 
