@@ -93,6 +93,18 @@ The Navigation Drawer handles account management, advanced analytics, and inform
   - **About App (حول التطبيق):** Version history and details.
 - **Sign Out Action:** A dedicated, color-coded red option (*"تسجيل الخروج"*) placed at the bottom to ensure clear visual hierarchy.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/4f339a0a-8a87-40b4-800c-b593650bcf5c" />
+
+## 💬 AI Chatbot & Assessment Screen (RAFIQ)
+
+This screen serves as an interactive assessment tool powered by an AI chatbot. It engages parents through a conversational survey to evaluate the child's developmental and behavioral milestones rather than using traditional complex forms.
+
+### Key Features & UI Components:
+- **Friendly Header:** Titled *"Let's talk about your child"* (لنتحدث عن طفلك) to establish a supportive and welcoming tone.
+- **Dynamic Chat Bubbles:**
+  - **Bot Responses:** Standardized white background cards accompanied by a smart assistant icon.
+  - **User Responses:** Color-coded blue bubbles right-aligned for clarity.
+- **Quick Reply Chips:** Interactive action buttons (`نعم`, `لا`, `بمساعدة`) enabling fast, single-tap responses to optimize user experience.
+- **Flexible Input Bar:** Features a rounded `TextField` with a placeholder (*"Or write your answer here..."*) alongside a dedicated blue Send action floating button.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/83d4c10c-eb8a-4fde-8342-7495cf2e3817" />
 
 
