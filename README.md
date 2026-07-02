@@ -78,7 +78,20 @@ This screen focuses on enhancing the child's cognitive and visual recognition ab
 - **Bottom Navigation Status:** Highlights the third active tab **"Recognition"** (التعرف) with its fingerprint icon indicator.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/d015e685-94b4-4ce2-a0ca-b2b4a4ddd231" />
 
+## 📑 Navigation Drawer (RAFIQ)
 
+The Navigation Drawer handles account management, advanced analytics, and informational resources that support parents and children using the **RAFIQ** platform.
+
+### Key Features & UI Components:
+- **Drawer Header:** Includes a circular avatar with an edit badge (pen icon) alongside the profile name (*"اسم الطفل"*) and user email.
+- **Menu Items (`ListView`):**
+  - **Edit Profile (تعديل الملف الشخصي):** Manage account credentials and child info.
+  - **Home Screen (الصفحة الرئيسية):** Quick jump back to the dashboard.
+  - **Reports (التقارير):** Progress tracking and performance statistics.
+  - **Smart Assistant (المساعد الذكي):** Direct interface for the AI chatbot.
+  - **About Asperger's (حول أسبرجر):** An educational resource module offering guidance regarding Asperger's syndrome.
+  - **About App (حول التطبيق):** Version history and details.
+- **Sign Out Action:** A dedicated, color-coded red option (*"تسجيل الخروج"*) placed at the bottom to ensure clear visual hierarchy.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/4f339a0a-8a87-40b4-800c-b593650bcf5c" />
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/83d4c10c-eb8a-4fde-8342-7495cf2e3817" />
 
