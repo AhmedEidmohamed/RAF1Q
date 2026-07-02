@@ -28,6 +28,19 @@ The Login Screen provides a secure and user-friendly interface for authenticatio
 - **Alternative Authentication:** - A quick-access "Sign in with Google" button fixed at the bottom.
   - A navigation link reading "Don't have an account? Create a smart account" to redirect users to the registration screen.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/92d4bfd9-1074-4da9-a835-fcc72b39c11b" />
+## 🏠 Home Screen / Dashboard (RAFIQ)
+
+The Home Screen acts as the main interactive dashboard for the child, displaying personalized greetings, current learning stages, and accessible activities.
+
+### Key Features & UI Components:
+- **Custom Header Bar:** Features a curved blue gradient layout, a navigation drawer icon `☰`, and a personalized welcome message (*"Welcome ahmed"* accompanied by the mascot).
+- **Stage Progress Card:** - Displays the current stage title: *"Stage 1: Introduction"*.
+  - Includes a playful visual banner showing children interacting with learning materials.
+  - Features an overall progress tracker currently showing `3%` completion.
+- **Activities List:** Clean, rounded list items for selecting learning topics (e.g., *"Identifying People"*, *"Identifying Places"*).
+- **Interactive Navigation & AI Assistant:**
+  - **Floating Action Button (FAB):** A dedicated shortcut featuring the AI robot icon for quick guidance or voice assistant interaction.
+  - **Modern Bottom Navigation Bar:** An ergonomic bottom bar highlighting the active "Home" (الرئيسية) tab alongside alternative navigation icons (Messages, Goals, Profile).
 
 
 
