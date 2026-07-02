@@ -62,6 +62,20 @@ This screen focuses on the core daily educational tasks and interactive modules 
   - **Call to Action (CTA):** A solid blue *"Start Now"* (ابدأ الآن) button to initiate the lesson.
 - **Bottom Navigation Status:** Shows the navigation bar with the second tab **"Interaction"** (التفاعل) currently selected and highlighted.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/59d31247-5b27-4b57-920c-900dcb73fe7b" />
+
+## 🔍 Recognition & Cognitive Training Screen (RAFIQ)
+
+This screen focuses on enhancing the child's cognitive and visual recognition abilities, enabling them to identify key faces and environments.
+
+### Key Features & UI Components:
+- **Motivation Banner:** A prominent blue card with a rocket icon and an encouraging tagline: *"Keep progressing to achieve amazing results!"*.
+- **Recognition Activity Card:**
+  - **Topic Title:** *"Identifying People"* (التعرف على الأشخاص).
+  - **Visual Header:** A 3D illustration of a warm family setting in a park.
+  - **Short Description:** Outlines the learning outcome (*"Learn how to easily recognize the faces of family members and friends"*).
+  - **Call to Action (CTA):** A solid blue *"Start Now"* (ابدأ الآن) button.
+- **Scrollable Preview:** Hints at the next lesson layout below, featuring a school environment graphic.
+- **Bottom Navigation Status:** Highlights the third active tab **"Recognition"** (التعرف) with its fingerprint icon indicator.
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/d015e685-94b4-4ce2-a0ca-b2b4a4ddd231" />
 
 
